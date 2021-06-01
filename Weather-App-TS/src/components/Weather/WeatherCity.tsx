@@ -16,7 +16,7 @@ const WeatherCity: React.FC<{
   handleRemove: (item: WeatherApi) => void;
 }> = ({ city, handleDegree, handleRemove }) => {
   return (
-    <Col sm="3" key={city.name} className="mt-5">
+    <Col sm="3" className="mt-5">
       <Card>
         <CardImg
           top
@@ -26,13 +26,15 @@ const WeatherCity: React.FC<{
         />
         <CardBody>
           <CardSubtitle tag="h6" className="mb-2 text-muted">
-            {city.name}
+            <span data-testid="weatherId">{city?.name}</span>
           </CardSubtitle>
-          <CardTitle tag="h5">{handleDegree(city.main.temp)}</CardTitle>
+          <CardTitle tag="h5">
+            {handleDegree && handleDegree(city?.main.temp)}
+          </CardTitle>
           <CardText>
             Sunrize:
-            {new Date(city.sys.sunrise).toLocaleTimeString()} <br />
-            Sunset: {new Date(city.sys.sunset).toLocaleTimeString()}
+            {new Date(city?.sys.sunrise).toLocaleTimeString()} <br />
+            Sunset: {new Date(city?.sys.sunset).toLocaleTimeString()}
           </CardText>
           <Button
             className="bg-transparent btn-outline-danger"

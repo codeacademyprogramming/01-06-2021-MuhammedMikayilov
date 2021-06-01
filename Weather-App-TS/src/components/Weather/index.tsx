@@ -1,20 +1,5 @@
 import React from "react";
-import {
-  Button,
-  ButtonGroup,
-  Col,
-  Container,
-  Form,
-  Input,
-  Label,
-  Row,
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-} from "reactstrap";
+import { Container, Row } from "reactstrap";
 import swal from "sweetalert";
 import { weatherService } from "../../Service/Weather/index";
 import DegreesCKF from "./DegreesCKF";
@@ -79,21 +64,24 @@ function Weather() {
   const handleSubmit = React.useCallback(
     async (e) => {
       e.preventDefault();
-      let response = await weatherService.getWeathers(inputVal);
-      let result: WeatherApi = await response.data;
-      if (response.status >= 200 && response.status < 300) {
-        let finded = weather.find(
-          (st) => st.name.toLowerCase() === inputVal.toLowerCase()
-        );
+      weatherService
+        .getWeathers(inputVal)
+        .then((resp: any) => {
+          let finded = weather.find(
+            (st) => st.name.toLowerCase() === inputVal.toLowerCase()
+          );
+          let data: WeatherApi = resp.data;
 
-        if (finded === undefined) {
-          setWeather([...weather, result]);
-        } else {
-          swal("OOPS", "This city already exist in your cart", "error");
-        }
-
-        setInputVal("");
-      } else swal("NOT FOUND", "We cannot found this city", "error");
+          if (finded === undefined) {
+            setWeather([...weather, data]);
+          } else {
+            swal("OOPS", "This city already exist in your cart", "error");
+          }
+        })
+        .catch((err) => {
+          swal("OOPS", "This city is not founded", "error");
+        });
+      setInputVal("");
     },
     [weather, inputVal]
   );
@@ -122,6 +110,7 @@ function Weather() {
 
         {weather.map((city) => (
           <WeatherCity
+            key={city.name}
             city={city}
             handleDegree={handleDegree}
             handleRemove={handleRemove}
